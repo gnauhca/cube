@@ -1,3 +1,5 @@
+cube_floor_num = 3;// 魔方的层数
+
 rotateDir = {
 	'y': {
 			'sizeEdges': [
@@ -30,13 +32,13 @@ rotateDir = {
 			'faceBottom': {'face': 'back', 'rotateDegree': 0}
 		},
 };
+//rotateDegree: 转多少个90(顺时针)度才能做成旋转层floor的顶面，底面 旋转层的底面是他的顶面向Y轴旋转180度做成的
+//floor的原始是z轴堆叠方向的，
 
 function $(id) {
 	return document.getElementById(id);
 }
-//rotateDegree: 转多少个90(顺时针)度才能做成旋转层floor的顶面，底面 旋转层的底面是他的顶面向Y轴旋转180度做成的
 
-//floor的原始是z轴堆叠方向的中间层排序是。。。
 
 
 //旋转i == j二维数组 dir: 1 顺时针， -1 逆时针, step 步数

@@ -8,7 +8,6 @@ var cube = (function() {
 			'bottom': null,
 		},
 		colors = [],
-		colNum = 3,
 		cubeSize = 200,
 		style = 'cool',//风格,
 		cubeWrapEle = null;
@@ -29,7 +28,7 @@ var cube = (function() {
 	function init() {
 		cubeWrapEle = document.getElementById('cubeWrap');
 		for (var type in faces) {
-			faces[type] = new Face(type, colNum);
+			faces[type] = new Face(type);
 			cubeWrapEle.appendChild(faces[type].getFaceEle());
 		}
 		reset();
@@ -42,11 +41,11 @@ var cube = (function() {
 		cubeWrapEle.style.marginLeft = -(cubeSize / 2) + 'px';
 		cubeWrapEle.style.marginTop = -(cubeSize / 2) + 'px';
 
-		floor.reset(colNum);
+		floor.reset();
 
 		for (var faceType in faces) {
-			faces[faceType].reset(colNum, cubeSize);
-			faces[faceType].faceEle.style.transform = faces[faceType].faceEle.style.transform.replace(/translateZ\([\d\.]*px\)/, 'translateZ(' + cubeSize/2.00001 + 'px)');
+			faces[faceType].reset();
+			faces[faceType].faceEle.style.transform = faces[faceType].faceEle.style.transform.replace(/translateZ\([\d\.]*px\)/, 'translateZ(' + cubeSize/2 + 'px)');
 		}		
 	}
 
@@ -57,7 +56,7 @@ var cube = (function() {
 	}
 	
 	cube.setColNum = function(_colNum) {
-		colNum = _colNum;
+		cube_floor_num = _colNum;
 		reset();
 	}
 
@@ -118,7 +117,7 @@ var cube = (function() {
 		//判断是否要上下面数据
 		rotateFloorData.faceUp = null;
 		rotateFloorData.faceBottom = null;
-		if (floorNum == colNum - 1) {//需要顶面数据
+		if (floorNum == cube_floor_num - 1) {//需要顶面数据
 			rotateFloorData.faceUp = {};
 			rotateFloorData.faceUp.faceType = rotateDirObj.faceUp.face;//上层面类型
 			rotateFloorData.faceUp.faceData = rotateSquareArr(faces[rotateDirObj.faceUp.face].getFaceData(), 1, rotateDirObj.faceUp.rotateDegree);//上层面数据
@@ -182,14 +181,11 @@ var cube = (function() {
 
 	cube.reset = function(_cubeSize, _colNum, _style) {
 		cubeSize = _cubeSize ? _cobeSize : cubeSize;
-		colNum = _colNum ? _colNum : colNum;
+		cube_floor_num = _colNum ? _colNum : cube_floor_num;
 		style = _style ? _style : style;
 		reset();
 	}
 
-	cube.getCurrentColNum = function() {
-		return colNum;
-	}
 	cube.getCurrentCubeSize = function() {
 		return cubeSize;
 	}
@@ -321,7 +317,7 @@ var cubeHandler = (function(cube) {
 
 	function startCube() {
 		//随机转魔方
-		var randomRotateNum = cube.getCurrentColNum() * 30,//随机转多少下
+		var randomRotateNum = cube_floor_num * 30,//随机转多少下
 			gapTime = 40,//两次随机转间隔时间
 			rotateTypes = ['x','y','z'];
 
@@ -333,9 +329,9 @@ var cubeHandler = (function(cube) {
 			} else {
 				var rotateType = rotateTypes[parseInt(Math.random() * 3)],
 					dir = (Math.random() > 0.5 ? 1 : -1),
-					floorNum = parseInt(Math.random() * cube.getCurrentColNum());
+					floorNum = parseInt(Math.random() * cube_floor_num);
 
-				rotateCube(rotateType, dir, floorNum, 0, false);//随机转魔方不需要动画
+				cube.rotate(rotateType, dir, floorNum, 0, false);//随机转魔方不需要动画
 				randomRotateNum--;
 				setTimeout(arguments.callee, gapTime);
 			}

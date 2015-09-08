@@ -1,12 +1,11 @@
 var Face = (function() {
 
-	function Face(faceType, colNum) {
+	function Face(faceType) {
 		this.blocks = [];
 		this.faceData = [];
 		this.faceType = faceType;
 		this.faceEle = document.createElement('div');
 		this.faceEle.className = 'face ' + faceType;
-		this.faceColNum = 0;
 
 		var faceTransformStyle = '';
 		switch (faceType) {
@@ -76,9 +75,9 @@ var Face = (function() {
 		//{'face': 'front', 'rowOrCol': 'row', 'dir': '1'},
 		var floorData = [];
 		if (edgeData.rowOrCol == 'col') {
-			floorData = this.col((edgeData.stackDir == 1? floorNum: this.faceColNum - 1 - floorNum));
+			floorData = this.col((edgeData.stackDir == 1? floorNum: cube_floor_num - 1 - floorNum));
 		} else {
-			floorData = this.row((edgeData.stackDir == 1? floorNum: this.faceColNum - 1 - floorNum));
+			floorData = this.row((edgeData.stackDir == 1? floorNum: cube_floor_num - 1 - floorNum));
 		}
 		return (edgeData.readDir == 1 ? floorData : floorData.reverse());
 	}
@@ -95,9 +94,9 @@ var Face = (function() {
 		}
 		//{'face': 'front', 'rowOrCol': 'row', 'dir': '1'},
 		if (edgeData.rowOrCol == 'col') {
-			return this.col((edgeData.stackDir == 1? floorNum: this.faceColNum - 1 - floorNum), (edgeData.readDir == 1 ? floorData : floorData.reverse()));
+			return this.col((edgeData.stackDir == 1? floorNum: cube_floor_num - 1 - floorNum), (edgeData.readDir == 1 ? floorData : floorData.reverse()));
 		} else {
-			return this.row((edgeData.stackDir == 1? floorNum: this.faceColNum - 1 - floorNum), (edgeData.readDir == 1 ? floorData : floorData.reverse()));
+			return this.row((edgeData.stackDir == 1? floorNum: cube_floor_num - 1 - floorNum), (edgeData.readDir == 1 ? floorData : floorData.reverse()));
 		}
 	}
 
@@ -148,33 +147,32 @@ var Face = (function() {
 	}
 
 
-	Face.prototype.reset = function(colNum) {
-		this.faceColNum = colNum;
-		for (var i = 0; i < colNum; i++) {
+	Face.prototype.reset = function() {
+		for (var i = 0; i < cube_floor_num; i++) {
 			if (!this.blocks[i]) {
 				this.blocks[i] = [];
 			}
 			//如果该下标已经有block实例。就reset 该block
-			for (var j = 0; j < colNum; j++) {
+			for (var j = 0; j < cube_floor_num; j++) {
 
 				if (this.blocks[i][j]) {
-					this.blocks[i][j].reset(this.faceType, j, i, (100/colNum), (100/colNum), (100/colNum) * j, (100/colNum) * i);
+					this.blocks[i][j].reset(this.faceType, j, i, (100/cube_floor_num), (100/cube_floor_num), (100/cube_floor_num) * j, (100/cube_floor_num) * i);
 				} else {
 					//blocks里面放的都是Block实例，具体属性在block.js
-					this.blocks[i][j] = new Block(this.faceType, j, i, (100/colNum), (100/colNum), (100/colNum) * j, (100/colNum) * i);
+					this.blocks[i][j] = new Block(this.faceType, j, i, (100/cube_floor_num), (100/cube_floor_num), (100/cube_floor_num) * j, (100/cube_floor_num) * i);
 					//将blockEle添加到face;
 					this.faceEle.appendChild(this.blocks[i][j].blockEle);
 					var testDiv = document.createElement('div');
 
 					//for test
-					//testDiv.innerHTML = i * colNum + j + 1 + this.faceType;
+					//testDiv.innerHTML = i * cube_floor_num + j + 1 + this.faceType;
 					//this.blocks[i][j].blockEle.appendChild(testDiv);
-					//this.blocks[i][j].blockEle.innerHTML = i * colNum + j + 1 + this.faceType;
+					//this.blocks[i][j].blockEle.innerHTML = i * cube_floor_num + j + 1 + this.faceType;
 				}
 
 			}
-			//删除比colNum多的列
-			var k = colNum;
+			//删除比cube_floor_num多的列
+			var k = cube_floor_num;
 			while (k < this.blocks[i].length) {
 				if (this.blocks[i][k]) {
 					this.faceEle.removeChild(this.blocks[i][k].blockEle);
@@ -183,10 +181,10 @@ var Face = (function() {
 				}
 				k++;
 			}
-			this.blocks[i].length = colNum;
+			this.blocks[i].length = cube_floor_num;
 		}
-		//shan除比colNum多的行
-		var row = colNum;
+		//shan除比cube_floor_num多的行
+		var row = cube_floor_num;
 		while(row < this.blocks.length) {
 			for (var col = 0; col < this.blocks[row].length; col++) {
 					this.faceEle.removeChild(this.blocks[row][col].blockEle);
@@ -195,7 +193,7 @@ var Face = (function() {
 			}
 			row++
 		}
-		this.blocks.length = colNum;
+		this.blocks.length = cube_floor_num;
 
 	}	
 

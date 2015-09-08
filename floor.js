@@ -20,7 +20,6 @@ var floor = (function() {
 		},//四边存的block
 		frontFace = null,//这是face对象
 		backFace = null,//这是face对象
-		colNum = 0,
 		blockWidthPercent = 0,//一块block的百分比25、33.333。。。。
 		hasBeenInit = false;
 
@@ -36,8 +35,8 @@ var floor = (function() {
 		floorEles.backMask.className = 'floor-backmask';
 
 		//制作旋转所用，旋转部分
-		frontFace = new Face('front', cube.getCurrentColNum());
-		backFace = new Face('back', cube.getCurrentColNum());
+		frontFace = new Face('front');
+		backFace = new Face('back');
 
 		floorEles.floorBox = document.createElement('div');
 		floorEles.floorBox.className = 'floor-box';
@@ -94,10 +93,9 @@ var floor = (function() {
 
 	//rotateType旋转类型：x/y/z；floorNum：该方向下的第几层；旋转层数据；方向；持续时间；旋转完之后的回调
 	floor.rotate = function(rotateType, floorNum, rotateFloorData, dir, durTime, callback) {
-		var colNum = cube.getCurrentColNum(),
-			cubeSize = cube.getCurrentCubeSize(),
-			blockSize = cubeSize/colNum,
-			blockWidthPercent = 100/colNum;
+		var cubeSize = cube.getCurrentCubeSize(),
+			blockSize = cubeSize/cube_floor_num,
+			blockWidthPercent = 100/cube_floor_num;
 
 		//设置旋转数据
 		rotateFloorData.faceUp && frontFace.setFaceData(rotateFloorData.faceUp.faceData);
@@ -121,12 +119,12 @@ var floor = (function() {
 			case 'y':
 				floorWrapTransform = 'rotateX(-90deg)';
 		}
-		floorWrapTransform += 'translateZ(' + ((floorNum - (colNum-1)/2) * blockSize) + 'px)';
+		floorWrapTransform += 'translateZ(' + ((floorNum - (cube_floor_num-1)/2) * blockSize) + 'px)';
 		floorEles.floorWrap.style.transform = floorWrapTransform;
 
 		//设置上下蒙板
 		floorEles.backMask.style.opacity = (floorNum == 0 ? '0' : '1');
-		floorEles.frontMask.style.opacity = (floorNum == colNum - 1 ? '0' : '1');
+		floorEles.frontMask.style.opacity = (floorNum == cube_floor_num - 1 ? '0' : '1');
 
 		floorEles.floorWrap.style.opacity = 1;
 
@@ -143,10 +141,9 @@ var floor = (function() {
 
 	floor.reset = function() {
 
-		var colNum = cube.getCurrentColNum(),
-			cubeSize = cube.getCurrentCubeSize(),
-			blockSize = cubeSize/colNum,
-			blockWidthPercent = 100/colNum;
+		var cubeSize = cube.getCurrentCubeSize(),
+			blockSize = cubeSize/cube_floor_num,
+			blockWidthPercent = 100/cube_floor_num;
 
 		if (!hasBeenInit) {
 			init();
@@ -182,8 +179,8 @@ var floor = (function() {
 
 
 		//前后面的blocks
-		frontFace.reset(colNum);
-		backFace.reset(colNum);
+		frontFace.reset(cube_floor_num);
+		backFace.reset(cube_floor_num);
 
 		//todo:置空前后里面的block的箭头
 		var divEles = frontFace.faceEle.getElementsByTagName('div'),
@@ -208,19 +205,19 @@ var floor = (function() {
 		//四边block,blockType统一先设置成front
 		for ( var sizeType in sizeEdges) {
 			var sizeArr = sizeEdges[sizeType];
-			for (var i = 0; i < colNum; i++) {
+			for (var i = 0; i < cube_floor_num; i++) {
 				if (sizeArr[i]) {
-					sizeArr[i].reset('front', i, 0, (100/colNum), 100, (100/colNum) * i, 0);
+					sizeArr[i].reset('front', i, 0, (100/cube_floor_num), 100, (100/cube_floor_num) * i, 0);
 				} else {
 					//blocks里面放的都是Block实例，具体属性在block.js
-					sizeArr[i] = new Block('front', i, 0, (100/colNum), 100, (100/colNum) * i, 0, true);//最后一个参数代表只是floor（用于旋转的block）
+					sizeArr[i] = new Block('front', i, 0, (100/cube_floor_num), 100, (100/cube_floor_num) * i, 0, true);//最后一个参数代表只是floor（用于旋转的block）
 
 					//将blockEle添加到size;
 					floorEles[sizeType].appendChild(sizeArr[i].blockEle);
 				}
 			}
 			//删除多余的block
-			var k = colNum;
+			var k = cube_floor_num;
 			while (k < sizeArr.length) {
 				if (sizeArr[k]) {
 					//console.log(sizeArr[k]);
@@ -230,7 +227,7 @@ var floor = (function() {
 				}
 				k++;
 			}
-			sizeArr.length = colNum;
+			sizeArr.length = cube_floor_num;
 		}
 
 	}

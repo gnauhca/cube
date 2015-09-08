@@ -11,8 +11,12 @@ var Block = (function() {
 		this.left = 0,
 		this.top = 0;
 		this.blockEle = document.createElement('div');
-		this.blockEle.innerHTML = '<div class="arrow-up"></div><div class="arrow-right"></div><div class="arrow-down"></div><div class="arrow-left"></div>';
-		if (floorBlock) {this.blockEle.setAttribute('alt', 'floorBlock')}
+		
+		if (floorBlock) {
+			this.blockEle.setAttribute('alt', 'floorBlock')
+		} else {
+			this.blockEle.innerHTML = '<div class="arrow-up"></div><div class="arrow-right"></div><div class="arrow-down"></div><div class="arrow-left"></div>';
+		}
 		this.reset(type, col, row, width, height, left, top);
 
 	}
@@ -56,6 +60,12 @@ var Block = (function() {
 
 
 
+		var arrowEles = this.blockEle.getElementsByTagName('div');
+
+		if (arrowEles.length === 0) {
+			return;
+		}
+
 		var block = this,
 			rowRotateData = {},//箭头横向（left right）转的时候要用的旋转数据，在sizeEdges里
 			colRotateData = {};//箭头竖向（up down）转的时候要用的旋转数据，在sizeEdges里
@@ -77,7 +87,6 @@ var Block = (function() {
 				}
 			}
 		}
-		var arrowEles = this.blockEle.getElementsByTagName('div');
 		for (var i = 0; i < arrowEles.length; i++) {
 			var arrowType = arrowEles[i].className.replace('arrow-', ''),
 				rotateType = '',
@@ -88,25 +97,26 @@ var Block = (function() {
 				case 'up':
 					rotateType = colRotateData.rotateType;
 					dir = -colRotateData.readDir;
-					floorNum = (colRotateData.stackDir == 1 ? block.col : cube.getCurrentColNum() - 1 - block.col);
+					floorNum = (colRotateData.stackDir == 1 ? block.col : cube_floor_num - 1 - block.col);
 					break;
 				case 'down':
 					rotateType = colRotateData.rotateType;
 					dir = colRotateData.readDir;
-					floorNum = (colRotateData.stackDir == 1 ? block.col : cube.getCurrentColNum() - 1 - block.col);
+					floorNum = (colRotateData.stackDir == 1 ? block.col : cube_floor_num - 1 - block.col);
 					break;
 				case 'left':
 					rotateType = rowRotateData.rotateType;
 					dir = -rowRotateData.readDir;
-					floorNum = (rowRotateData.stackDir == 1 ? block.row : cube.getCurrentColNum() - 1 - block.row);
+					floorNum = (rowRotateData.stackDir == 1 ? block.row : cube_floor_num - 1 - block.row);
 					break;
 				case 'right':
 					rotateType = rowRotateData.rotateType;
 					dir = rowRotateData.readDir;
-					floorNum = (rowRotateData.stackDir == 1 ? block.row : cube.getCurrentColNum() - 1 - block.row);
+					floorNum = (rowRotateData.stackDir == 1 ? block.row : cube_floor_num - 1 - block.row);
 					break;
 			}
 			arrowEles[i].setAttribute('alt', rotateType + ',' + dir + ',' + floorNum);
+			arrowEles[i].style.borderWidth = (cube.getCurrentCubeSize()/cube_floor_num)/6 + 'px';
 		}
 	}
 	return Block;
